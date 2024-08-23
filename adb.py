@@ -47,6 +47,7 @@ class Tool:
             return f'{self.data}'
         
         return False
+        
 threads = []
 
 for i in range(len(devices)):
