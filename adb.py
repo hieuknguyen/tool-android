@@ -7,8 +7,14 @@ adb = Client(host="127.0.0.1", port=5037)
 
 devices = adb.devices();
 class Tool:
-    def __init__(sefl,total):
+    
+    def __init__(sefl,total, data):
         sefl.total = total
+        sefl.data = data
+        
+    def tap(self,x, y):
+        devices[self.total].shell(f'input tap {x} {y}')
+    
     def test(self):
         print(devices[self.total].serial, '\n')
         devices[self.total].shell('input tap 581 210')
@@ -27,30 +33,32 @@ class Tool:
         device = devices[self.total].serial  
     
         path = fr'C:/Users/nguye/Downloads/a/pic/{device}.png'
+        list_path = fr'C:/Users/nguye/Downloads/a/list_data/{self.data}.png'
     
-    
-        path1 = r'C:/Users/nguye/Downloads/a/a.png'
         img = cv2.imread(path)
-        img1 = cv2.imread(path1)
+        img_data = cv2.imread(list_path)
 
-        result = cv2.matchTemplate(img, img1, cv2.TM_CCOEFF_NORMED)
-
+        result = cv2.matchTemplate(img, img_data, cv2.TM_CCOEFF_NORMED)
 
         threshold = 0.9
         loc = np.where(result >= threshold)
-
-
+        
         if len(loc[0]) > 0:
-            print("true")
-        else:
-            print("false")
+            return f'{self.data}'
+        
+        return False
 threads = []
 
 for i in range(len(devices)):
+    
     p1 = Tool(i)
-    t1 = threading.Thread(target=p1.screen)
+    
+    t1 = threading.Thread(target=p1.tap, args=(100,200,))
+    
     threads.append(t1)
     t1.start()
     
 for t in threads:
     t.join()
+
+
